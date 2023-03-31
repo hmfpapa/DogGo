@@ -1,0 +1,100 @@
+﻿@model DogGo.Models.ViewModels.WalkerProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div>
+    <h1>@Model.Walker.Name</h1>
+
+    <section class="container">
+        <img style="width:100px;float:left;margin-right:20px"
+             src="@Model.Walker.ImageUrl" alt="avatar" />
+        <div>
+            <label class="font-weight-bold">Name:</label>
+            <span>@Model.Walker.Name</span>
+        </div>
+        <div>
+            <label class="font-weight-bold">Neighborhood:</label>
+            <span>@Model.Walker.Neighborhood.Name</span>
+        </div>
+    </section>
+
+    <hr class="mt-5" />
+    <div class="clearfix"></div>
+
+    <div class="row">
+        <section class="col-8 container mt-5">
+            <h3 class="text-left">Recent Walks</h3>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Client</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Walks walk in Model.Walks)
+                    {
+                        <tr>
+                            <td>
+                                @walk.Date
+                            </td>
+                            <td>
+                                @walk.Dog.Owner.Name
+                            </td>
+                            <td>
+                                @{
+                                    int wTotalDuration = walk.Duration;
+                                    double wTotalMinutes = wTotalDuration / 60.0;
+                                    double wHours = wTotalMinutes / 60.0;
+                                    double wMinutesLeft = wTotalMinutes % 60.0;
+                                    if (wHours < 1.0)
+                                    {
+                                        wHours = 0;
+                                        wMinutesLeft = wTotalMinutes;
+                                    };
+                                }
+                                <span>
+                                    @{
+                                        @Math.Floor(wHours)
+                                    }hr @{
+                                        @Math.Floor(wMinutesLeft)
+                                    }min
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+        <section class="col-lg-4 col-md-8 container mt-5">
+            <h3>
+                Total Walk Time: @{
+                    int totalDuration = Model.Walks.Sum(w => w.Duration);
+                    double totalMinutes = totalDuration / 60.0;
+                    double hours = totalMinutes / 60.0;
+                    double minutesLeft = totalMinutes % 60.0;
+                    if (hours < 1.0)
+                    {
+                        hours = 0;
+                        minutesLeft = totalMinutes;
+                    };
+                }
+                <span>
+                    @{
+                        @Math.Floor(hours)
+                    }hr @{
+                        @Math.Floor(minutesLeft)
+                    }min
+                </span>
+            </h3>
+        </section>
+    </div>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Walker.Id }) |
+    <a asp-action="Index">Back to List</a>
+</div>
